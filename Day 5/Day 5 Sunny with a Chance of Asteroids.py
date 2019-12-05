@@ -19,12 +19,22 @@ def load_file(filename):
 
 def parseInstruction(instruction):
     """
+    Returns:
+    opCode, p1, p2
     """
-    opCode = int(str(instruction)[-2:])
-    p1 = int(str(instruction)[-3:-2])
-    p2 = int(str(instruction)[-4:-3])
+    #print(f"instruction : {instruction}")
 
-    return opCode, p1, p2
+    if len(str(instruction)) == 1:
+        return instruction, 0, 0
+
+    elif instruction == 99:
+        return instruction, 0, 0
+    
+    elif len(str(instruction)) == 3:
+        return int(str(instruction)[-2:]), int(str(instruction)[-3:-2]), 0
+
+    else:
+        return int(str(instruction)[-2:]), int(str(instruction)[-3:-2]), int(str(instruction)[-4:-3])
 
 def getValue(mode, parameter, memory):
     """
@@ -32,7 +42,7 @@ def getValue(mode, parameter, memory):
     if mode == 0:
         return memory[memory[parameter]]
     else:
-        return parameter
+        return memory[parameter]
 
 def Computer(memoryIn, someInput):
         """Mostly copied from Part 1
@@ -42,9 +52,14 @@ def Computer(memoryIn, someInput):
         currentIndex = 0
         while currentIndex != 'end' and currentIndex < len(memory):
 
-            opCode, p1, p2 = parseInstruction(currentIndex)
+            if memory[currentIndex] == 3 or memory[currentIndex] == 4:
+                #print(f"instruction : {memory[currentIndex]}")
+                opCode, p1, p2 = memory[currentIndex], 0, 0
+            else:
+                opCode, p1, p2 = parseInstruction(memory[currentIndex])
 
             if opCode == 1:
+                #print(f"storing {getValue(p1, currentIndex + 1, memory)} + {getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
                 memory[memory[currentIndex + 3]] = getValue(p1, currentIndex + 1, memory) + getValue(p2, currentIndex + 2, memory)
                 currentIndex += 4
                 #print("1 Add")
@@ -53,11 +68,15 @@ def Computer(memoryIn, someInput):
                 currentIndex += 4
                 #print("2 Multiply")
             elif opCode == 3:
+                #print(f"storing {someInput} at {memory[currentIndex + 1]}")
                 memory[memory[currentIndex + 1]] = someInput
                 currentIndex += 2
                 #print("3 Input")  
             elif opCode == 4:
-                print(memory[memory[currentIndex + 1]])
+                if p1 == 0:
+                    print(f"output: {memory[memory[currentIndex + 1]]}")
+                else:
+                    print(f"output: {memory[currentIndex + 1]}")
                 currentIndex += 2
                 #print("4 Output")  
             elif opCode == 99:
