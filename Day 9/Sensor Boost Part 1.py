@@ -133,7 +133,6 @@ class IntcodeComputer(object):
                     #print("2 Multiply")
 
                 elif opCode == 3:
-
                     if inputNum == 1:
                         #set phase
                         #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
@@ -147,7 +146,6 @@ class IntcodeComputer(object):
                         currentIndex += 2
                         #print("3 Input")
     
-
                 elif opCode == 4:
                     output.append(self.getValue(p1, currentIndex + 1, memory))
                     currentIndex += 2
