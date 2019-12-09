@@ -71,13 +71,13 @@ class IntcodeComputer(object):
             while currentIndex != 'end' and currentIndex < len(memory):
 
                 if memory[currentIndex] == 3 or memory[currentIndex] == 4:
-                    #print(f"instruction : {memory[currentIndex]}")
+                    print(f"instruction : {memory[currentIndex]}")
                     opCode, p1, p2 = memory[currentIndex], 0, 0
                 else:
                     opCode, p1, p2 = self.parseInstruction(memory[currentIndex])
 
                 if opCode == 1:
-                    #print(f"storing {getValue(p1, currentIndex + 1, memory)} + {getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
+                    print(f"storing {self.getValue(p1, currentIndex + 1, memory)} + {self.getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
                     memory[memory[currentIndex + 3]] = self.getValue(p1, currentIndex + 1, memory) + self.getValue(p2, currentIndex + 2, memory)
                     currentIndex += 4
                     #print("1 Add")
@@ -88,13 +88,13 @@ class IntcodeComputer(object):
                 elif opCode == 3:
                     if inputNum == 1:
                         #set phase
-                        #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
+                        print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
                         memory[memory[currentIndex + 1]] = phaseSetting
                         currentIndex += 2
                         inputNum += 1
                         #print("3 Input")
                     else:
-                        #print(f"storing {someInput} at {memory[currentIndex + 1]}")
+                        print(f"storing {someInput} at {memory[currentIndex + 1]}")
                         memory[memory[currentIndex + 1]] = someInput
                         currentIndex += 2
                         #print("3 Input")
@@ -106,8 +106,32 @@ class IntcodeComputer(object):
                         print(f"output: {memory[currentIndex + 1]}")
                         return memory[currentIndex + 1]
                     currentIndex += 2
-                    #print("4 Output")  
-                elif opCode == 99:
+                    #print("4 Output")
+                elif opCode == 5:
+                    if self.getValue(p1, currentIndex + 1, memory) != 0:
+                        currentIndex = self.getValue(p2, currentIndex + 2, memory)
+                    else:
+                        currentIndex += 3
+                elif opCode == 6:
+                    if self.getValue(p1, currentIndex + 1, memory) == 0:
+                        currentIndex = self.getValue(p2, currentIndex + 2, memory)
+                    else:
+                        currentIndex += 3
+                elif opCode == 7:
+                    if self.getValue(p1, currentIndex + 1, memory) < self.getValue(p2, currentIndex + 2, memory):
+                        memory[memory[currentIndex + 3]] = 1
+                        currentIndex += 4
+                    else:
+                        memory[memory[currentIndex + 3]] = 0
+                        currentIndex += 4
+                elif opCode == 8:
+                    if self.getValue(p1, currentIndex + 1, memory) == self.getValue(p2, currentIndex + 2, memory):
+                        memory[memory[currentIndex + 3]] = 1
+                        currentIndex += 4
+                    else:
+                        memory[memory[currentIndex + 3]] = 0
+                        currentIndex += 4
+                else:
                     currentIndex = 'end'
                     #print("99 End")
 
@@ -115,7 +139,7 @@ class IntcodeComputer(object):
 testsToRun = list(permutations(range(0, 5)))
 
 #load memory
-memory = load_file("Day 7/input test.txt")
+memory = load_file("Day 7/input test3.txt")
 
 # initialize amplifiers
 A = IntcodeComputer(memory.copy())
@@ -126,6 +150,7 @@ E = IntcodeComputer(memory.copy())
 
 maxThrust = 0
 for elm in testsToRun:
+    print(f"Testing element {elm}")
     Aout = A.Compute(elm[0], 0)
     Bout = B.Compute(elm[1], Aout)
     Cout = C.Compute(elm[2], Bout)
