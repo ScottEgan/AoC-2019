@@ -120,93 +120,36 @@ class IntcodeComputer(object):
 
                 if opCode == 1:
                     #print(f"storing {self.getValue(p1, currentIndex + 1, memory)} + {self.getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
-
                     toSet = self.getValue(p1, currentIndex + 1, memory) + self.getValue(p2, currentIndex + 2, memory)
                     self.setValue(p3, currentIndex + 3, toSet, memory)
-
                     currentIndex += 4
                     #print("1 Add")
 
                 elif opCode == 2:
                     #print(f"storing {self.getValue(p1, currentIndex + 1, memory)} * {self.getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
-  
                     toSet = self.getValue(p1, currentIndex + 1, memory) * self.getValue(p2, currentIndex + 2, memory)
                     self.setValue(p3, currentIndex + 3, toSet, memory)
-
                     currentIndex += 4
                     #print("2 Multiply")
 
                 elif opCode == 3:
-                    if p1 == 1:
-                        if inputNum == 1:
-                            #set phase
-                            #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
-                            try:
-                                memory[memory[currentIndex + 1]] = phaseSetting
-                            except IndexError:
-                                memory.extend([0] * (memory[currentIndex + 1] - (len(memory) - 1)))
-                                memory[memory[currentIndex + 1]] = phaseSetting
 
-                            currentIndex += 2
-                            inputNum += 1
-                            #print("3 Input")
-                        else:
-                            #print(f"storing {someInput} at {memory[currentIndex + 1]}")
-                            try:
-                                memory[memory[currentIndex + 1]] = someInput
-                            except IndexError:
-                                memory.extend([0] * (memory[currentIndex + 1] - (len(memory) - 1)))
-                                memory[memory[currentIndex + 1]] = someInput
-
-                            currentIndex += 2
-                            #print("3 Input")
+                    if inputNum == 1:
+                        #set phase
+                        #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
+                        self.setValue(p1, currentIndex + 1, phaseSetting, memory)
+                        currentIndex += 2
+                        inputNum += 1
+                        #print("3 Input")
                     else:
-                        if inputNum == 1:
-                            #set phase
-                            #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
-                            try:
-                                memory[self.relativeBase + memory[currentIndex + 1]] = phaseSetting
-                            except IndexError:
-                                memory.extend([0] * ((self.relativeBase + memory[currentIndex + 1]) - (len(memory) - 1)))
-                                memory[self.relativeBase + memory[currentIndex + 1]] = phaseSetting
-
-                            currentIndex += 2
-                            inputNum += 1
-                            #print("3 Input")
-                        else:
-                            #print(f"storing {someInput} at {memory[currentIndex + 1]}")
-                            try:
-                                memory[self.relativeBase + memory[currentIndex + 1]] = someInput
-                            except IndexError:
-                                memory.extend([0] * ((self.relativeBase + memory[currentIndex + 1]) - (len(memory) - 1)))
-                                memory[self.relativeBase + memory[currentIndex + 1]] = someInput
-
-                            currentIndex += 2
-                            #print("3 Input")
-
+                        #print(f"storing {someInput} at {memory[currentIndex + 1]}")
+                        self.setValue(p1, currentIndex + 1, someInput, memory)
+                        currentIndex += 2
+                        #print("3 Input")
+    
 
                 elif opCode == 4:
-                    if p1 == 0:
-                        #print(f"output: {memory[memory[currentIndex + 1]]}")
-                        try:
-                            output.append(memory[memory[currentIndex + 1]])
-                        except IndexError:
-                            memory.extend([0] * (memory[currentIndex + 1] - (len(memory) - 1)))
-                            output.append(memory[memory[currentIndex + 1]])
-                    elif p1 == 1:
-                        #print(f"output: {memory[currentIndex + 1]}")
-                        try:
-                            output.append(memory[currentIndex + 1])
-                        except IndexError:
-                            memory.extend([0] * ((currentIndex + 1) - (len(memory) - 1)))
-                            output.append(memory[currentIndex + 1])
-                    else:
-                        try:
-                            output.append(memory[self.relativeBase + memory[currentIndex + 1]])
-                        except IndexError:
-                            memory.extend([0] * ((self.relativeBase + memory[currentIndex + 1]) - (len(memory) - 1)))
-                            output.append(memory[self.relativeBase + memory[currentIndex + 1]])
-
+                    output.append(self.getValue(p1, currentIndex + 1, memory))
                     currentIndex += 2
                     #print("4 Output")
 
@@ -224,28 +167,20 @@ class IntcodeComputer(object):
 
                 elif opCode == 7:
                     if self.getValue(p1, currentIndex + 1, memory) < self.getValue(p2, currentIndex + 2, memory):
-                        
                         self.setValue(p3, currentIndex + 3, 1, memory)
-
                         currentIndex += 4
 
                     else:
-
                         self.setValue(p3, currentIndex + 3, 0, memory)
-
                         currentIndex += 4
 
                 elif opCode == 8:
                     if self.getValue(p1, currentIndex + 1, memory) == self.getValue(p2, currentIndex + 2, memory):
-
                         self.setValue(p3, currentIndex + 3, 1, memory)
-
                         currentIndex += 4
 
                     else:
-
                         self.setValue(p3, currentIndex + 3, 0, memory)
-
                         currentIndex += 4
 
                 elif opCode == 9:
