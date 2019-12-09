@@ -13,7 +13,7 @@ def load_file(filename):
     a (list) of ints
     """
     inputList = []
-    print("Loading list from file...") 
+    print(f"Loading list from file... {filename}") 
     with open(filename) as file:
         inputList = [int(x) for x in file.read().split(",")]
 
@@ -71,13 +71,13 @@ class IntcodeComputer(object):
             while currentIndex != 'end' and currentIndex < len(memory):
 
                 if memory[currentIndex] == 3 or memory[currentIndex] == 4:
-                    print(f"instruction : {memory[currentIndex]}")
+                    #print(f"instruction : {memory[currentIndex]}")
                     opCode, p1, p2 = memory[currentIndex], 0, 0
                 else:
                     opCode, p1, p2 = self.parseInstruction(memory[currentIndex])
 
                 if opCode == 1:
-                    print(f"storing {self.getValue(p1, currentIndex + 1, memory)} + {self.getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
+                    #print(f"storing {self.getValue(p1, currentIndex + 1, memory)} + {self.getValue(p2, currentIndex + 2, memory)} at {memory[currentIndex + 3]}")
                     memory[memory[currentIndex + 3]] = self.getValue(p1, currentIndex + 1, memory) + self.getValue(p2, currentIndex + 2, memory)
                     currentIndex += 4
                     #print("1 Add")
@@ -88,22 +88,22 @@ class IntcodeComputer(object):
                 elif opCode == 3:
                     if inputNum == 1:
                         #set phase
-                        print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
+                        #print(f"storing {phaseSetting} at {memory[currentIndex + 1]}")
                         memory[memory[currentIndex + 1]] = phaseSetting
                         currentIndex += 2
                         inputNum += 1
                         #print("3 Input")
                     else:
-                        print(f"storing {someInput} at {memory[currentIndex + 1]}")
+                        #print(f"storing {someInput} at {memory[currentIndex + 1]}")
                         memory[memory[currentIndex + 1]] = someInput
                         currentIndex += 2
                         #print("3 Input")
                 elif opCode == 4:
                     if p1 == 0:
-                        print(f"output: {memory[memory[currentIndex + 1]]}")
+                        #print(f"output: {memory[memory[currentIndex + 1]]}")
                         return memory[memory[currentIndex + 1]]
                     else:
-                        print(f"output: {memory[currentIndex + 1]}")
+                        #print(f"output: {memory[currentIndex + 1]}")
                         return memory[currentIndex + 1]
                     currentIndex += 2
                     #print("4 Output")
@@ -139,7 +139,7 @@ class IntcodeComputer(object):
 testsToRun = list(permutations(range(0, 5)))
 
 #load memory
-memory = load_file("Day 7/input test3.txt")
+memory = load_file("Day 7/input.txt")
 
 # initialize amplifiers
 A = IntcodeComputer(memory.copy())
@@ -150,7 +150,7 @@ E = IntcodeComputer(memory.copy())
 
 maxThrust = 0
 for elm in testsToRun:
-    print(f"Testing element {elm}")
+    #print(f"Testing element {elm}")
     Aout = A.Compute(elm[0], 0)
     Bout = B.Compute(elm[1], Aout)
     Cout = C.Compute(elm[2], Bout)
