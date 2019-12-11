@@ -42,6 +42,9 @@ for a in asteroidLoc:
                     slope = 'x'
                 
             else:
+                #TODO: change slope to an angle measurement 
+                # and change distance to absolute value
+
                 #compare slope and distance
                 # slope = y2 - y1 / x2 - x1
                 slope = Fraction(b[1] - a[1], b[0] - a[0])
