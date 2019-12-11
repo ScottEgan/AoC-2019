@@ -106,18 +106,14 @@ class IntcodeComputer(object):
                 memory.extend([0] * ((self.relativeBase + memory[parameter]) - (len(memory) - 1)))
                 memory[self.relativeBase + memory[parameter]] = value
 
-    def setInput(self, input):
-        """
-        """
-        self.phaseSetting = input
-        self.someInput = input
-
-    def Compute(self):
+    def Compute(self, index, input):
         """Mostly copied from Part 1
         """
         memory = self.get_memory()
+        self.phaseSetting = input
+        self.someInput = input
         inputNum = 1
-        currentIndex = 0
+        currentIndex = index
         output = []
         while currentIndex != 'end' and currentIndex < len(memory):
 
@@ -156,9 +152,10 @@ class IntcodeComputer(object):
                     #print("3 Input")
 
             elif opCode == 4:
-                output = self.getValue(p1, currentIndex + 1, memory)
+                output.append(self.getValue(p1, currentIndex + 1, memory))
                 currentIndex += 2
-                return output
+                if len(output) == 2:
+                    return output, currentIndex
                 #print("4 Output")
 
             elif opCode == 5:
@@ -208,7 +205,7 @@ memory = load_file("Day 11/input.txt")
 # initialize amplifiers
 robot = IntcodeComputer(memory.copy())
 
-robot.setInput(0)
-firstOutput = robot.Compute()
 
-print(firstOutput)
+firstOutput, currentIndex = robot.Compute(0, 0)
+
+print(firstOutput, currentIndex)
