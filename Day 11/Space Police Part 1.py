@@ -1,5 +1,7 @@
 """
 """
+import matplotlib.pyplot as plt
+import time
 
 def load_file(filename):
     """Loads a file to a list
@@ -236,9 +238,14 @@ step = 0
 direction = 'N'
 currentIndex = 0
 x = 0
+xlist = []
 y = 0
-while currentIndex != 'end' and step < 30:
+ylist = []
+fig = plt.figure()
 
+while currentIndex != 'end' and step < 50:
+    xlist.append(x)
+    ylist.append(y)
     coord[(x, y)] = 0
     print(f"robot at {x}, {y} facing {direction} tile is {coord[(x, y)]}")
     output, currentIndex = robot.Compute(currentIndex, coord[(x, y)])
@@ -283,4 +290,10 @@ while currentIndex != 'end' and step < 30:
             direction = 'N'
             y += 1
 
+    plt.cla()
+    plt.axis([-10, 5, -5, 30])
+    plt.plot(xlist, ylist, 'b-')
+    plt.pause(0.2)
     step += 1
+
+plt.show()
