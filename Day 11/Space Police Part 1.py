@@ -114,6 +114,7 @@ class IntcodeComputer(object):
         output = []
         while currentIndex != 'end' and currentIndex < len(self.memory):
 
+            #print(f"index is: {currentIndex}")
             if self.memory[currentIndex] == 3 or self.memory[currentIndex] == 4:
                 #print(f"instruction : {self.memory[currentIndex]}")
                 opCode, p1, p2, p3 = self.memory[currentIndex], 0, 0, 0
@@ -222,7 +223,7 @@ class IntcodeComputer(object):
 memory = load_file("Day 11/input.txt")
 
 #dictionary to hold coordinates (x, y) and if that panel is white '1' or black '0'
-coord = {(0, 0): 0}
+coord = {(0, 0): 1}
 
 # initialize robot
 robot = IntcodeComputer(memory.copy())
@@ -238,7 +239,7 @@ fig = plt.figure()
 
 plot = True
 
-while currentIndex != 'end' and step < 150:
+while currentIndex != 'end' and step < 10000:
 
     xlist.append(x)
     ylist.append(y)
@@ -246,26 +247,32 @@ while currentIndex != 'end' and step < 150:
     if (x, y) not in coord.keys():
         coord[(x, y)] = 0
 
-    print(f"robot at ({x}, {y}) facing {direction} tile is {coord[(x, y)]}")
-    print(f"starting robot with index {currentIndex} and input {coord[(x, y)]}")
+    #print(f"robot at ({x}, {y}) facing {direction} tile is {coord[(x, y)]}")
+    #print(f"starting robot with index {currentIndex} and input {coord[(x, y)]}")
+    #print("")
 
     output, currentIndex = robot.Compute(currentIndex, coord[(x, y)])
 
-    print(output, currentIndex)
+    #print(output, currentIndex)
+
+    if currentIndex == 'end':
+        break
 
     if output[0] == 0:
         #paint panel black
-        print(f"paint panel black at {x}, {y}")
+        #print("")
+        #print(f"paint panel black at {x}, {y}")
         coord[(x, y)] = 0
     else:
         #paint panel white
-        print(f"paint panel white at {x}, {y}")
+        #print("")
+        #print(f"paint panel white at {x}, {y}")
         coord[(x, y)] = 1
     
     if output[1] == 0:
         #robot turns left 90 deg
         #and moves forward 1 space
-        print("robot turns to the left")
+        #print("robot turns to the left")
         if direction == 'N':
             direction = 'W'
             x -= 1
@@ -281,7 +288,7 @@ while currentIndex != 'end' and step < 150:
     else:
         #robot turns right 90 deg
         #and moves forward 1 space
-        print("robot turns to the right")
+        #print("robot turns to the right")
         if direction == 'N':
             direction = 'E'
             x += 1
@@ -297,16 +304,17 @@ while currentIndex != 'end' and step < 150:
 
     if plot:
         plt.cla()
-        plt.axis([-20, 20, -20, 20])
+        plt.axis([-40, 40, -40, 40])
         plt.plot(xlist, ylist, 'b-')
-        plt.pause(0.2)
+        plt.pause(0.002)
 
     step += 1
-    print(f"step number: {step}")
-    print(f"robot at {x}, {y} facing {direction}")
-    print("")
+    #print(f"step number: {step}")
+    #print(f"robot at {x}, {y} facing {direction}")
+    #print("")
 
 print("END")
-print(len(coord.keys())) 
+print(len(coord.keys()))
+print(coord) 
 if plot:
     plt.show()
