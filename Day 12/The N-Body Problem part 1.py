@@ -25,14 +25,12 @@ import itertools as itt
 # each time step contaings the following:
 #         x, y, z, vx, vy, vz
 #         0   1  2  3  4  5
-Io = {0: (-1, 0, 2, 0, 0, 0)}
-Eu = {0: (2, -10, -7, 0, 0, 0)}
-Ga = {0: (4, -8, 8, 0, 0, 0)}
-Ca = {0: (3, 5, -1, 0, 0, 0)}
+Io = {0: [-15, 1, 4, 0, 0, 0]}
+Eu = {0: [1, -10, -8, 0, 0, 0]}
+Ga = {0: [-5, 4, 9, 0, 0, 0]}
+Ca = {0: [4, 6, -2, 0, 0, 0]}
 
 moons = [Io, Eu, Ga, Ca]
-
-print(list(itt.combinations(range(4), 2)))
 
 def applyGravityAxis(firstMoonValue, secondMoonValue):
     """
@@ -52,11 +50,56 @@ def applyGravityAxis(firstMoonValue, secondMoonValue):
 def Gravity(moons, step):
     """
     """
+    #initialize the next steps from current step
+    for elm in range(len(moons)):
+        moons[elm][step + 1] = moons[elm][step].copy()
+
     for elm in list(itt.combinations(range(4), 2)):
         first = elm[0]
         second = elm[1]
-        for i in range(2):
+        for i in range(3):
             firstupdate, secondupdate = applyGravityAxis(moons[first][step][i], moons[second][step][i])
-            moons[first][step][i + 3] = firstupdate
-            moons[second][step][i + 3] = secondupdate
+            moons[first][step + 1][i + 3] += firstupdate
+            moons[second][step + 1][i + 3] += secondupdate
 
+def Velocity(moons, step):
+    """
+    """
+    for elm in range(len(moons)):
+        for i in range(3):
+            moons[elm][step + 1][i] = moons[elm][step][i] + moons[elm][step + 1][i + 3]
+
+def totEnergy(moons, step):
+    """
+    """
+    
+    tot = 0
+    for elm in range(len(moons)):
+        pot = 0
+        kin = 0
+        for i in range(3):
+            pot += abs(moons[elm][step][i])
+            kin += abs(moons[elm][step][i + 3])
+
+        tot += pot * kin
+
+    return tot
+
+for i in range(1001):
+
+    #print pretty output
+    print("")
+    print(f"After {i} steps:")
+    for elm in range(len(moons)):
+        print(f"pos=<x= {moons[elm][i][0]:<4}, y= {moons[elm][i][1]:<4}, z= {moons[elm][i][2]:<4}>," 
+               f"vel= < x={moons[elm][i][3]:<4}, y={moons[elm][i][4]:<4}, z={moons[elm][i][5]:<4} > ")
+
+    #do gravity
+    Gravity(moons, i)
+    #do velocity
+    Velocity(moons, i)
+    
+
+#do energy
+totalEnergy = totEnergy(moons, i)   
+print(totalEnergy)
