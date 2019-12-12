@@ -237,7 +237,7 @@ y = 0
 ylist = []
 fig = plt.figure()
 
-plot = True
+plot = False
 
 while currentIndex != 'end' and step < 10000:
 
@@ -315,6 +315,15 @@ while currentIndex != 'end' and step < 10000:
 
 print("END")
 print(len(coord.keys()))
-print(coord) 
+
 if plot:
     plt.show()
+
+for elm in coord.keys():
+    if coord[elm] == 1:
+        plt.axis([0, 40, -10, 10])
+        plt.scatter(elm[0], elm[1])
+        plt.pause(0.002)
+
+plt.show()
+    
