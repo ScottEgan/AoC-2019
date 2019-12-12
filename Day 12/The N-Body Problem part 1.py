@@ -21,14 +21,41 @@ test2:
 
 import itertools as itt
 
+with open("Day 12/input.txt") as file:
+    lines = [line.strip() for line in file.readlines()]
+    lines = [line.strip(">") for line in lines]
+    lines = [line.split(',') for line in lines]
+    for i, line in enumerate(lines):
+        lines[i] = [elm.split('=') for elm in line]
+
+a = []
+for i in range(3):
+    a.append(int(lines[0][i][1]))
+b = []
+for i in range(3):
+    b.append(int(lines[1][i][1]))
+c = []
+for i in range(3):
+    c.append(int(lines[2][i][1]))
+d = []
+for i in range(3):
+    d.append(int(lines[3][i][1]))
+
+for i in range(3):
+    a.append(0)
+    b.append(0)
+    c.append(0)
+    d.append(0)
+
+
 # dictionary organized by time step
 # each time step contaings the following:
 #         x, y, z, vx, vy, vz
 #         0   1  2  3  4  5
-Io = {0: [-15, 1, 4, 0, 0, 0]}
-Eu = {0: [1, -10, -8, 0, 0, 0]}
-Ga = {0: [-5, 4, 9, 0, 0, 0]}
-Ca = {0: [4, 6, -2, 0, 0, 0]}
+Io = {0: a}
+Eu = {0: b}
+Ga = {0: c}
+Ca = {0: d}
 
 moons = [Io, Eu, Ga, Ca]
 
