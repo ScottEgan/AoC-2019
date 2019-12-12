@@ -199,6 +199,6 @@ memory = load_file("Day 9/input.txt")
 # initialize amplifiers
 A = IntcodeComputer(memory.copy())
 
-Aout = A.Compute(1, 1)
+Aout = A.Compute(2, 2)
 
 print(Aout)
