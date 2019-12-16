@@ -30,22 +30,32 @@ for elm in lines:
 #print(d)
 
 requirements = {}
-def findSupplies(input_num, input_elm):
+def findSupplies(required_num_elm, input_elm):
     """
+    9 ORE => 2 A
+    8 ORE => 3 B
+    7 ORE => 5 C
+    2 AB => 1 D
+    3 A, 4 B => 3 AB
+    5 B, 7 C => 1 BC
+    4 C, 1 A => 1 CA
+    2 D, 2 AB, 3 BC, 4 CA => 1 FUEL
     """
     for i in range(len(d[input_elm][1])):
+        req_elm = d[input_elm][1][i][1]
         output_num = d[input_elm][0]
         req_num = d[input_elm][1][i][0]
-        req_elm = d[input_elm][1][i][1]
+        num_required = math.ceil(required_num_elm / output_num) * req_num
+        
         if req_elm == "ORE":
-            return input_num, input_elm
+            return required_num_elm, input_elm
         else:
-            ret_num, ret_elm = findSupplies(req_num, req_elm)
+            ret_num, ret_elm = findSupplies(num_required, req_elm)
 
         if ret_elm not in requirements.keys():
-            requirements[ret_elm] = ret_num * math.ceil(input_num/output_num)
+            requirements[ret_elm] = ret_num
         else:
-            requirements[ret_elm] += ret_num * math.ceil(input_num/output_num)
+            requirements[ret_elm] += ret_num
     
     return 0, ret_elm
 
