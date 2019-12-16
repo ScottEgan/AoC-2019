@@ -34,20 +34,21 @@ def findSupplies(input_num, input_elm):
     """
     """
     for i in range(len(d[input_elm][1])):
+        output_num = d[input_elm][0]
         req_num = d[input_elm][1][i][0]
         req_elm = d[input_elm][1][i][1]
         if req_elm == "ORE":
             return input_num, input_elm
         else:
             ret_num, ret_elm = findSupplies(req_num, req_elm)
-            if ret_elm == "exit":
-                return 0, "exit"
-            elif ret_elm not in requirements.keys():
-                requirements[ret_elm] = ret_num
-            else:
-                requirements[ret_elm] += ret_num
+
+        if ret_elm not in requirements.keys():
+            requirements[ret_elm] = ret_num * math.ceil(input_num/output_num)
+        else:
+            requirements[ret_elm] += ret_num * math.ceil(input_num/output_num)
     
-    return 0, "exit"
+    return 0, ret_elm
+
 
 finalNum, finalElm = findSupplies(1, 'FUEL')
 
