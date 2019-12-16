@@ -62,6 +62,7 @@ with open("Day 10/input.txt") as file:
 #
 with open("Day 12/input.txt") as file:
     lines = [line.strip() for line in file.readlines()]
+    lines = [line.strip(">") for line in lines]
     lines = [line.split(',') for line in lines]
     for i, line in enumerate(lines):
         lines[i] = [elm.split('=') for elm in line]
