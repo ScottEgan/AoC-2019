@@ -1,11 +1,16 @@
 """
+tried depth first search and it gave the wrong answers.
+will have to do breadth first search
+
 9 ORE => 2 A
 8 ORE => 3 B
 7 ORE => 5 C
-3 A, 4 B => 1 AB
+2 AB => 1 D
+3 A, 4 B => 3 AB
 5 B, 7 C => 1 BC
 4 C, 1 A => 1 CA
-2 AB, 3 BC, 4 CA => 1 FUEL
+2 D, 2 AB, 3 BC, 4 CA => 1 FUEL
+
 """
 import math
 
@@ -27,45 +32,26 @@ for elm in lines:
         elm[0][i] = elm[0][i].strip()
         d[elm[1][0].split()[1]][1].append((int(elm[0][i].split()[0]), elm[0][i].split()[1]))
 
-#print(d)
+print(d)
 
 requirements = {}
-def findSupplies(required_num_elm, input_elm):
-    """
-    9 ORE => 2 A
-    8 ORE => 3 B
-    7 ORE => 5 C
-    2 AB => 1 D
-    3 A, 4 B => 3 AB
-    5 B, 7 C => 1 BC
-    4 C, 1 A => 1 CA
-    2 D, 2 AB, 3 BC, 4 CA => 1 FUEL
-    """
-    for i in range(len(d[input_elm][1])):
-        req_elm = d[input_elm][1][i][1]
-        output_num = d[input_elm][0]
-        req_num = d[input_elm][1][i][0]
-        num_required = math.ceil(required_num_elm / output_num) * req_num
-        
-        if req_elm == "ORE":
-            return required_num_elm, input_elm
-        else:
-            ret_num, ret_elm = findSupplies(num_required, req_elm)
-
-        if ret_elm not in requirements.keys():
-            requirements[ret_elm] = ret_num
-        else:
-            requirements[ret_elm] += ret_num
-    
-    return 0, ret_elm
 
 
-finalNum, finalElm = findSupplies(1, 'FUEL')
+# new strategy:
+# 1: find all base elements that break down into ORE
+# 2: keep reducing 
+for elm in d["FUEL"][1]:
+    if elm[1] not in requirements:
+        requirements[elm[1]] = elm[0]
+    else:
+        requirements[elm[1]] += elm[0]
 
 print(requirements)
 
-ore = 0
-for elm in requirements.keys():
-    ore += math.ceil(requirements[elm]/d[elm][0]) * d[elm][1][0][0]
 
-print(ore)
+
+# ore = 0
+# for elm in requirements.keys():
+#     ore += math.ceil(requirements[elm]/d[elm][0]) * d[elm][1][0][0]
+
+# print(ore)
