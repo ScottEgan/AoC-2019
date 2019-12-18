@@ -29,7 +29,7 @@ I'm new to coding and I'm trying to use these problems to get better in python..
 ## Day 13
 
 ## Day 14
-Really struggled with this day. Ended up re-writing the solution ~5 times. 
+Really struggled with this day. Ended up re-writing the solution ~5 times.  
 In the end I just wasn't being rigorous enough with my tracking of leftover materials
 
 ## Day 15
