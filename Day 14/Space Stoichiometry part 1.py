@@ -46,26 +46,6 @@ print(f"all elements: {allElements}")
 # 1: keep track of extra production
 # 4: profit
 
-# levels = {}
-# def findlevels(element):
-#     productList = d[element][1]
-
-#     for i in range(len(productList)):
-#         productName = productList[i][1]
-        
-#         if productName == "ORE":
-#             return 1
-#         else:
-#             level = findlevels(productName)
-#             if productName not in levels.keys():
-#                 levels[productName] = level
-#                 print(f"{productName} is level {level}")
-
-#     if element != "FUEL":
-#         return level + 1
-#     else:
-#         return max(levels.values()) + 1
-
 basics = {}
 for elm in d.keys():
     if d[elm][1][0][1] == "ORE":
@@ -73,37 +53,34 @@ for elm in d.keys():
 
 print(f"basics: {basics}")
 
-# secondLevel = {}
-# for elm in d.keys():
-
-#     for i in range(len(d[elm][1])):
-#         if d[elm][1][i][1] in basics:
-#             secondLevel[elm] = 0
-
-
-#print(f"second level: {secondLevel}")
-
 # do a breadth first search to find requirements for second level elements
-def BFS(inputElement):
+def BFS(inputElement, allElements):
     queue = []
+    queuesim = []
 
     for i in range(len(d[inputElement][1])):
-        queue.append((d[inputElement][1][i][1], d[inputElement][1][i][0]))
+        queue.append([d[inputElement][1][i][1], d[inputElement][1][i][0]])
+        queuesim.append(d[inputElement][1][i][1])
 
     print(f"queue: {queue}")
+    print(f"queue simple: {queuesim}")
     ore = 0
     while queue:
         tmp = queue.pop(0)
+        queuesim.pop(0)
         elmName = tmp[0]
         qtyElmReq = tmp[1]
         qtyElmProd = d[elmName][0]
         reactList = d[elmName][1]
 
-        if allElements[elmName] >= qtyElmReq:
-            allElements[elmName] -= qtyElmReq
-            useOre = False
-        elif qtyElmProd > qtyElmReq:
-                allElements[elmName] += (qtyElmProd - qtyElmReq)
+        if allElements[elmName] > 0:
+            qtyElmReq -= allElements[elmName]
+            if qtyElmReq > 0:
+                useOre = True
+            else:
+                useOre = False
+        elif (math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) > qtyElmReq:
+                allElements[elmName] += ((math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) - qtyElmReq)
                 useOre = True
         else:
             useOre = True
@@ -112,43 +89,15 @@ def BFS(inputElement):
             for i in range(len(reactList)):
                 reactName = reactList[i][1]
                 qtyReact = reactList[i][0]
-                queue.append((reactName, math.ceil(qtyElmReq / qtyElmProd) * qtyReact))
+                if reactName in queuesim:
+                    queue[queuesim.index(reactName)][1] += (math.ceil(qtyElmReq / qtyElmProd) * qtyReact)
+                else:
+                    queue.append([reactName, math.ceil(qtyElmReq / qtyElmProd) * qtyReact])
+                    queuesim.append(reactName)
         elif useOre:
-            ore += reactList[0][0]
+            ore += math.ceil(qtyElmReq / qtyElmProd) * reactList[0][0]
 
     return ore
-
-#topLevel = findlevels("FUEL")
-
-#print(f"fuel is level {topLevel}")
-#print(f"levels: {levels}")    
-oreRequired = BFS("FUEL")
+  
+oreRequired = BFS("FUEL", allElements)
 print(oreRequired)
-
-
-
-# calculate second level needs based on second level elements
-# for elm in secondLevel.keys():
-#     for i in range(len(d[elm][1])):
-#         if d[elm][1][i][1] in secondLevel.keys():
-#             secondLevel[d[elm][1][i][1]] += math.ceil(secondLevel[elm] / d[elm][0]) * d[elm][1][i][0]
-
-# find basic level needs based on second level needs
-# total basic level = required second level / produced second level * basic level required
-# for elm in secondLevel.keys():
-#     for i in range(len(d[elm][1])):
-#         if d[elm][1][i][1] in basics.keys():
-#             basics[d[elm][1][i][1]] += math.ceil(secondLevel[elm] / d[elm][0]) * d[elm][1][i][0]
-        
-        
-# print(f"all elements: {allElements}")            
-# print(f"second level requirements: {secondLevel}")
-# print(f"basics requirements: {basics}")
-
-# find ore requirements based on basic level needs
-# ore total = required basic / produced basic * ore required
-
-# for elm in basics.keys():
-#     ore += math.ceil(basics[elm] / d[elm][0]) * d[elm][1][0][0]
-
-# print(f"ore required: {ore}")
