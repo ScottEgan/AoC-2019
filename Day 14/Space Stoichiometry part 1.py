@@ -33,16 +33,26 @@ for elm in lines:
         elm[0][i] = elm[0][i].strip()
         d[elm[1][0].split()[1]][1].append((int(elm[0][i].split()[0]), elm[0][i].split()[1]))
 
-print(f"input: {d}")
+#print(f"input: {d}")
 
-requirements = {}
+allElements = {}
+for elm in d.keys():
+    if elm not in allElements:
+        allElements[elm] = 0
+    for i in range(len(d[elm][1])):
+        if d[elm][1][i][1] not in allElements:
+            allElements[d[elm][1][i][1]] = 0
+
+print(f"all elements: {allElements}")
+ 
 
 
-# new strategy:
-# 1: find all base elements that break down into ORE
-# 2: find everything that is one level up from those
-# 3: break down everything into how many of each second level is needed
-# 4: calculate the basic level needs based on the second level
+# new strategy V2:
+# 1: find all unique elements
+# 2: sum the requirements for each element
+# 3: ??
+# 4: profit
+
 
 basics = {}
 for elm in d.keys():
@@ -77,6 +87,7 @@ def BFS(inputElement):
         elif tmp[0] in basics.keys():
             basics[tmp[0]] += tmp[1]
         else:
+            allElements[tmp[0]] += tmp[1]
             for i in range(len(d[tmp[0]][1])):
                 queue.append((d[tmp[0]][1][i][1], math.ceil(tmp[1] / d[tmp[0]][0]) * d[tmp[0]][1][i][0]))
 
@@ -99,7 +110,7 @@ for elm in secondLevel.keys():
             basics[d[elm][1][i][1]] += math.ceil(secondLevel[elm] / d[elm][0]) * d[elm][1][i][0]
         
         
-            
+print(f"all elements: {allElements}")            
 print(f"second level requirements: {secondLevel}")
 print(f"basics requirements: {basics}")
 
