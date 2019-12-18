@@ -1,6 +1,5 @@
 # AoC-2019
 Here are my messy solutions to the 2019 Advent of Code.
-
 I'm new to coding and I'm trying to use these problems to get better in python...
 
 
