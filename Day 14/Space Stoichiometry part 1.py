@@ -74,14 +74,17 @@ def BFS(inputElement, allElements):
         reactList = d[elmName][1]
 
         if allElements[elmName] > 0:
-            qtyElmReq -= allElements[elmName]
+            if allElements[elmName] > qtyElmReq:
+                allElements[elmName] -= qtyElmReq
+                qtyElmReq = 0
+            else:
+                qtyElmReq -= allElements[elmName]
+                allElements[elmName] = 0
+
             if qtyElmReq > 0:
                 useOre = True
             else:
                 useOre = False
-        elif (math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) > qtyElmReq:
-                allElements[elmName] += ((math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) - qtyElmReq)
-                useOre = True
         else:
             useOre = True
 
@@ -96,6 +99,8 @@ def BFS(inputElement, allElements):
                     queuesim.append(reactName)
         elif useOre:
             ore += math.ceil(qtyElmReq / qtyElmProd) * reactList[0][0]
+            if (math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) > qtyElmReq:
+                allElements[elmName] += ((math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) - qtyElmReq)
 
     return ore
   
