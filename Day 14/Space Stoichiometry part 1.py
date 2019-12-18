@@ -10,7 +10,7 @@ will have to do breadth first search
 """
 import math
 
-with open("Day 14/inputTest.txt") as file:
+with open("Day 14/input.txt") as file:
     lines = [line.strip() for line in file.readlines()]
     lines = [line.split('=>') for line in lines]
 
@@ -89,6 +89,9 @@ def BFS(inputElement, allElements):
             useOre = True
 
         if elmName not in basics.keys() and useOre:
+            if (math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) > qtyElmReq:
+                allElements[elmName] += ((math.ceil(qtyElmReq / qtyElmProd) * qtyElmProd) - qtyElmReq)
+            
             for i in range(len(reactList)):
                 reactName = reactList[i][1]
                 qtyReact = reactList[i][0]
