@@ -227,17 +227,24 @@ direction = 3   #start by trying to go west
 x = 0
 y = 0
 end = False
+pathValue = 0
+pathValueDic = {}
 # stuff for plotting
-size = 60
-A = np.zeros((size, size))
-fig = plt.figure(figsize=(8, 8))
-fig.subplots_adjust(0,0,1,1)
-plt.axes().set_aspect('equal')
-cmap = matplotlib.colors.ListedColormap(['black', 'white', 'chartreuse', 'crimson', 'cyan'])
-xdraw = int(x + (size / 2))
-ydraw = int(y + (size / 2))
-A[ydraw, xdraw] = coord[(x, y)]
-plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
+# set to True for plotz
+# --------------
+plot = False
+# --------------
+if plot:
+    size = 60
+    A = np.zeros((size, size))
+    fig = plt.figure(figsize=(8, 8))
+    fig.subplots_adjust(0,0,1,1)
+    plt.axes().set_aspect('equal')
+    cmap = matplotlib.colors.ListedColormap(['black', 'white', 'chartreuse', 'crimson', 'cyan'])
+    xdraw = int(x + (size / 2))
+    ydraw = int(y + (size / 2))
+    A[ydraw, xdraw] = coord[(x, y)]
+    plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
 
 while step < 10000 and not end:
 
@@ -265,7 +272,6 @@ while step < 10000 and not end:
             coord[(x - 1, y)] = 3
             direction = 1   #if there is a wall to the west - go north
 
-        #direction = random.randint(1, 4)
             
     # moved one step in direction passed
     elif output == 1:
@@ -290,7 +296,11 @@ while step < 10000 and not end:
             direction = 2  # check for wall to south
         
         coord[(x, y)] = 1
-        #direction = random.randint(1, 4)
+        if (x, y) not in pathValueDic.keys():
+            pathValue += 1
+            pathValueDic[(x, y)] = pathValue
+        else:
+            pathValue = pathValueDic[(x, y)]
 
     #found o2 system
     elif output == 2:
@@ -309,25 +319,67 @@ while step < 10000 and not end:
         
         coord[(x, y)] = 2
         O2Location = (x, y)
-        #end = True
+        if (x, y) not in pathValueDic.keys():
+            pathValue += 1
+            pathValueDic[(x, y)] = pathValue
+        else:
+            pathValue = pathValueDic[(x, y)]
 
-    new = {k: coord[k] for k in set(coord) - preset}
-    if new:
-        newList = [[elm[0], elm[1]] for elm in new.keys()]
-        xdraw = int(newList[0][0] + (size / 2))
-        ydraw = int(newList[0][1] + (size / 2))
-        A[ydraw, xdraw] = 4
-        plt.cla()
-        plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
-        plt.pause(0.02)
-        A[ydraw, xdraw] = new[(newList[0][0], newList[0][1])]
+    if plot:
+        new = {k: coord[k] for k in set(coord) - preset}
+        if new:
+            newList = [[elm[0], elm[1]] for elm in new.keys()]
+            xdraw = int(newList[0][0] + (size / 2))
+            ydraw = int(newList[0][1] + (size / 2))
+            A[ydraw, xdraw] = 4
+            plt.cla()
+            plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
+            plt.pause(0.02)
+            A[ydraw, xdraw] = new[(newList[0][0], newList[0][1])]
 
     step += 1
-    print(step)
+    #print(step)
     if (x, y) == (0, 0) and step > 10:
         end = True
 
-print(O2Location)
-plt.show()
+print(f"O2 location is: {O2Location}")
+print(f"step value at O2Location is: {pathValueDic[O2Location]}")
+print()
 
+if plot:
+    plt.show()
 
+# use dic comprehension to chop the size of the dictionary to just 
+# paths shorter than the one to the o2 sensor
+croppedDic = {k: v for k, v in pathValueDic.items() if v <= pathValueDic[(12, -14)]}
+
+def findNextStep(curx, cury, croppedDic):
+    """
+    """
+    val = 1000
+    for i in range(-1, 2, 2):
+        if (curx + i, cury) in croppedDic.keys():
+            if croppedDic[(curx + i, cury)] < val:
+                val = croppedDic[(curx + i, cury)]
+                x = curx + i
+                y = cury
+
+        if (curx, cury + i) in croppedDic.keys():
+            if croppedDic[(curx, cury + i)] < val:
+                val = croppedDic[(curx, cury + i)]
+                x = curx
+                y = cury + i
+
+    return (x, y)  
+
+x1 = 12
+y1 = -14
+pathList = []
+while (x1, y1) != (0, 0):
+
+    step = findNextStep(x1, y1, croppedDic)
+    pathList.append(step)
+    x1, y1 = step[0], step[1]
+
+#Sprint(pathList)
+print(f"shortest path is: {len(pathList)}")
