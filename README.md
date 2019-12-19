@@ -33,6 +33,9 @@ Really struggled with this day. Ended up re-writing the solution ~5 times.
 In the end I just wasn't being rigorous enough with my tracking of leftover materials
 
 ## Day 15
+This one was fun for me. I spent some extra time trying to plot everything and have it animate as the robot moved through the maze.  
+I first started with a random robot who just chose a random direction every step. This worked as I eventually mapped the whole maze but it took 750,000 steps!  
+Next I decided to use the age old technique of following a wall. This was way more efficient and the whole maze was mapped in around 3000 steps. Once I knew I could map the maze I implemented a counting algorithm to count the number of steps the robot currently was from the start. Finally using these counts I traced the robots path backwards from the O2 system following the decreasing step count.
 ## Day 16
 ## Day 17
 ## Day 18
