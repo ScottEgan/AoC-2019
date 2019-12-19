@@ -1,5 +1,6 @@
 """
 Intcode maze robot
+found 02 at 12, -14
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -226,17 +227,18 @@ x = 0
 y = 0
 end = False
 # stuff for plotting
-size = 40
+size = 60
 A = np.zeros((size, size))
 fig = plt.figure(figsize=(8, 8))
+fig.subplots_adjust(0,0,1,1)
 plt.axes().set_aspect('equal')
-cmap = matplotlib.colors.ListedColormap(['black', 'white', 'red', 'brown'])
+cmap = matplotlib.colors.ListedColormap(['black', 'white', 'chartreuse', 'crimson', 'cyan'])
 xdraw = int(x + (size / 2))
 ydraw = int(y + (size / 2))
 A[xdraw, ydraw] = coord[(x, y)]
 plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
 
-while step < 100 and not end:
+while step < 10000000 and not end:
 
     output = robot.Compute(direction)
     preset = set(coord.copy())
@@ -297,6 +299,7 @@ while step < 100 and not end:
             x -= 1
         
         coord[(x, y)] = 2
+        print(f"found 02 at {x}, {y}")
         end = True
 
     new = {k: coord[k] for k in set(coord) - preset}
@@ -304,13 +307,13 @@ while step < 100 and not end:
         newList = [[elm[0], elm[1]] for elm in new.keys()]
         xdraw = int(newList[0][0] + (size / 2))
         ydraw = int(newList[0][1] + (size / 2))
-        A[xdraw, ydraw] = new[(newList[0][0], newList[0][1])]
+        A[xdraw, ydraw] = 4
         plt.cla()
         plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
-        plt.pause(0.2)
+        plt.pause(0.02)
+        A[xdraw, ydraw] = new[(newList[0][0], newList[0][1])]
 
     step += 1
     print(step)
 
 plt.show()
-print(coord)
