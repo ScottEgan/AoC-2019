@@ -1,9 +1,11 @@
 """
 Intcode maze robot
 """
-
+import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors
 import time
+import random
 
 def load_file(filename):
     """Loads a file to a list
@@ -223,31 +225,40 @@ direction = 1
 x = 0
 y = 0
 end = False
-while step < 10000 or not end:
+# stuff for plotting
+size = 40
+A = np.zeros((size, size))
+fig = plt.figure(figsize=(8, 8))
+plt.axes().set_aspect('equal')
+cmap = matplotlib.colors.ListedColormap(['black', 'white', 'red', 'brown'])
+xdraw = int(x + (size / 2))
+ydraw = int(y + (size / 2))
+A[xdraw, ydraw] = coord[(x, y)]
+plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
+
+while step < 100 and not end:
 
     output = robot.Compute(direction)
-
+    preset = set(coord.copy())
     #wall in direction
     if output == 0:
         # trying to go north
         if direction == 1:
-            direction = 4  # instead go east
             coord[(x, y + 1)] = 3
-            
+
         # trying to go east
         elif direction == 4:
-            direction = 2  # instead go south
             coord[(x + 1, y)] = 3
-            
+
         # trying to go south
         elif direction == 2:
-            direction = 3  # instead go west
             coord[(x, y - 1)] = 3
-            
+     
         #trying to go west
         elif direction == 3:
-            direction = 1  # instead go noth
             coord[(x - 1, y)] = 3
+
+        direction = random.randint(1, 4)
             
     # moved one step in direction passed
     elif output == 1:
@@ -268,6 +279,7 @@ while step < 10000 or not end:
             x -= 1
         
         coord[(x, y)] = 1
+        direction = random.randint(1, 4)
 
     #found o2 system
     elif output == 2:
@@ -287,6 +299,18 @@ while step < 10000 or not end:
         coord[(x, y)] = 2
         end = True
 
+    new = {k: coord[k] for k in set(coord) - preset}
+    if new:
+        newList = [[elm[0], elm[1]] for elm in new.keys()]
+        xdraw = int(newList[0][0] + (size / 2))
+        ydraw = int(newList[0][1] + (size / 2))
+        A[xdraw, ydraw] = new[(newList[0][0], newList[0][1])]
+        plt.cla()
+        plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
+        plt.pause(0.2)
+
     step += 1
+    print(step)
 
-
+plt.show()
+print(coord)
