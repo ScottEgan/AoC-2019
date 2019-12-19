@@ -1,6 +1,7 @@
 """
 Intcode maze robot
 found 02 at 12, -14
+for some reason I had to switch x and y in the plot?
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -222,7 +223,7 @@ coord = {(0, 0): 1}
 
 # initial conditions
 step = 0
-direction = 1
+direction = 3   #start by trying to go west
 x = 0
 y = 0
 end = False
@@ -235,53 +236,61 @@ plt.axes().set_aspect('equal')
 cmap = matplotlib.colors.ListedColormap(['black', 'white', 'chartreuse', 'crimson', 'cyan'])
 xdraw = int(x + (size / 2))
 ydraw = int(y + (size / 2))
-A[xdraw, ydraw] = coord[(x, y)]
+A[ydraw, xdraw] = coord[(x, y)]
 plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
 
-while step < 10000000 and not end:
+while step < 10000 and not end:
 
     output = robot.Compute(direction)
     preset = set(coord.copy())
     #wall in direction
     if output == 0:
-        # trying to go north
+        # trying to go north (1)
         if direction == 1:
             coord[(x, y + 1)] = 3
-
-        # trying to go east
+            direction = 4   #if there is a wall to the north - go east 
+            
+        # trying to go east (4)
         elif direction == 4:
             coord[(x + 1, y)] = 3
+            direction = 2   #if there is a wall to the east - go south
 
-        # trying to go south
+        # trying to go south (2)
         elif direction == 2:
             coord[(x, y - 1)] = 3
+            direction = 3   #if there is a wall to the south - go west
      
-        #trying to go west
+        # trying to go west (3)
         elif direction == 3:
             coord[(x - 1, y)] = 3
+            direction = 1   #if there is a wall to the west - go north
 
-        direction = random.randint(1, 4)
+        #direction = random.randint(1, 4)
             
     # moved one step in direction passed
     elif output == 1:
         # going north
         if direction == 1:
             y += 1
+            direction = 3   # check for wall to west
             
         # going east
         elif direction == 4:
             x += 1
+            direction = 1   # check for wall to north
             
         # going south
         elif direction == 2:
             y -= 1
-
+            direction = 4  # check for wall to east
+            
         # going west
         elif direction == 3:
             x -= 1
+            direction = 2  # check for wall to south
         
         coord[(x, y)] = 1
-        direction = random.randint(1, 4)
+        #direction = random.randint(1, 4)
 
     #found o2 system
     elif output == 2:
@@ -299,21 +308,26 @@ while step < 10000000 and not end:
             x -= 1
         
         coord[(x, y)] = 2
-        print(f"found 02 at {x}, {y}")
-        end = True
+        O2Location = (x, y)
+        #end = True
 
     new = {k: coord[k] for k in set(coord) - preset}
     if new:
         newList = [[elm[0], elm[1]] for elm in new.keys()]
         xdraw = int(newList[0][0] + (size / 2))
         ydraw = int(newList[0][1] + (size / 2))
-        A[xdraw, ydraw] = 4
+        A[ydraw, xdraw] = 4
         plt.cla()
         plt.pcolormesh(A, edgecolors='k', linewidths=0.5, cmap=cmap)
         plt.pause(0.02)
-        A[xdraw, ydraw] = new[(newList[0][0], newList[0][1])]
+        A[ydraw, xdraw] = new[(newList[0][0], newList[0][1])]
 
     step += 1
     print(step)
+    if (x, y) == (0, 0) and step > 10:
+        end = True
 
+print(O2Location)
 plt.show()
+
+
