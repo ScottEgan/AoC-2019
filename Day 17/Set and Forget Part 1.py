@@ -215,8 +215,9 @@ output = []
 
 output = robot.Compute()
 
-
+# find all values of 10 in the output list
 idxlist = [idx + 1 for idx, val in enumerate(output) if val == 10]
+
 temp = zip(chain([0], idxlist), chain(idxlist, [None])) 
 res = list(output[i:j] for i, j in temp)
 
