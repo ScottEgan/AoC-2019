@@ -37,7 +37,10 @@ This one was fun for me. I spent some extra time trying to plot everything and h
 I first started with a random robot who just chose a random direction every step. This worked as I eventually mapped the whole maze but it took 750,000 steps!  
 Next I decided to use the age old technique of following a wall. This was way more efficient and the whole maze was mapped in around 3000 steps. Once I knew I could map the maze I implemented a counting algorithm to count the number of steps the robot currently was from the start. Finally using these counts I traced the robots path backwards from the O2 system following the decreasing step count.
 ## Day 16
+Today was pretty straight forward as long as you started small and made sure you had everything accounted for. Solution easily scaled up.
 ## Day 17
+Another use of the intcode computer!  
+This time we ran a program to produce a series of overlapping lines where we had to determine the locations of each of the intersections. Just using some plotting and some simple checks was enough to solve part 1.
 ## Day 18
 ## Day 19
 ## Day 20

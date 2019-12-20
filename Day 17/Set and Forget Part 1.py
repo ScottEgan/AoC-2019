@@ -239,9 +239,10 @@ for i in range(len(res)):
 print(intersects)
 print(sum)
 
-
+plt.figure()
+ax = plt.subplot()
 plt.pcolormesh(res, edgecolors='k', linewidths=0.5)
-plt.axes().invert_yaxis()
+ax.invert_yaxis()
 plt.show()
 
 
