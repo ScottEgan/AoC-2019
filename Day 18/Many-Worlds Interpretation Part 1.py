@@ -19,25 +19,34 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib import cm
 
-with open("Day 18/input.txt") as file:
+with open("Day 18/inputTest.txt") as file:
     line = [list(line.replace('#', '3').replace('.', '1').replace('@', '5').strip()) for line in file]
 #print(line)
 
 maze = np.array(line, dtype=np.object)
 #print(maze)
-
+doors = {}
+keys = {}
 for index, value in np.ndenumerate(maze):
     if not value.isalpha():
         maze[index] = int(value)
+        if value == '5':
+            robot = index
     else:
         maze[index] = int(ord(value))
-#print(maze)
+        if value.isupper():
+            doors[index] = value
+        else:
+            keys[index] = value
 
 maze = maze.astype(np.int, copy=False)
 
+print(doors)
+print(keys)
+print(robot)
 #print(maze)
 
-plot = True
+plot = False
 if plot:
     # color map:
     # 1-2 white
