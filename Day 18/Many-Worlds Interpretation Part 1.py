@@ -6,13 +6,6 @@ another maze
 65 - 90 = doors => blue
 97 -122 = keys => orange
 
-color map:
-1-2 white
-3-4 black
-5-64 cyan
-64-90 blue
-91-96 white
-97-122 orange
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,11 +20,14 @@ maze = np.array(line, dtype=np.object)
 #print(maze)
 doors = {}
 keys = {}
+path = set()
 for index, value in np.ndenumerate(maze):
     if not value.isalpha():
         maze[index] = int(value)
         if value == '5':
-            robot = index
+            robot = tuple(index)
+        elif value == '1':
+            path.add(index)
     else:
         maze[index] = int(ord(value))
         if value.isupper():
@@ -44,24 +40,43 @@ maze = maze.astype(np.int, copy=False)
 print(doors)
 print(keys)
 print(robot)
+print(path)
 #print(maze)
 
-plot = False
+possibleMovement = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+moveQueue = [robot]
+keyList = []
+step = 0
+# not sure what to do here in order to solve this. may need to look into path finding algorithms
+while step < 10:
+    currentCoord = moveQueue.pop(0)
+    for elm in possibleMovement:
+        updatedCoord = tuple(e + v for e, v in zip(elm, currentCoord))
+        if updatedCoord in path:
+            moveQueue.append(updatedCoord)
+        elif updatedCoord in keys:
+            moveQueue.append(updatedCoord)
+            keyList.append(keys[updatedCoord])
+    
+    step += 1
+
+
+plot = True
 if plot:
     # color map:
-    # 1-2 white
-    # 3-4 black
-    # 5-64 cyan
-    # 64-90 blue
-    # 91-96 white
-    # 97-122 orange
+    # 1-2 white => path
+    # 3-4 black => walls
+    # 5-64 cyan => robot
+    # 64-90 blue => doors
+    # 91-96 white 
+    # 97-122 orange => keys
     
     white = np.tile(np.array([1, 1, 1, 1]), (2, 1))
     black = np.tile(np.array([0, 0, 0, 1]), (2, 1))
     cyan = np.tile(np.array([0, 1, 1, 1]), (60, 1))
-    blue = cm.get_cmap('winter', 26)(np.linspace(0, 1, 26))
+    blue = np.tile(np.array([0, 0, 1, 1]), (26, 1))
     white2 = np.tile(np.array([1, 1, 1, 1]), (6, 1))
-    orange = cm.get_cmap('autumn', 26)(np.linspace(0, 1, 26))
+    orange = np.tile(np.array([1, 165/255, 0, 1]), (26, 1))
     
     newcolor = np.vstack((white, black, cyan, blue, white2, orange))
     cmap = colors.ListedColormap(newcolor)
