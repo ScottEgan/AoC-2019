@@ -45,49 +45,63 @@ print(f"robot: {robot}")
 print(f"path {path}")
 #print(maze)
 
-path.add(robot)
 
+def newState(updatedCoord, stateList):
+    """
+    return true if this state hasn't been seen yet
+    """
+    for elm in [col[1] for col in stateList if col[0] == updatedCoord]:
+        if ''.join(list(set([char for char in elm]) - set([char for char in currentKeys]))) != '':
+            return False
+    
+    return True
+
+path.add(robot)
 possibleMovement = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 step = 0
 keyList = ''
 moveQueue = [(robot, keyList, step)]
-stateList = {(robot, keyList): step}
+stateList = [(robot, keyList, step)]
+
 # not sure what to do here in order to solve this. may need to look into path finding algorithms
 while step < 100 and len(keyList) < len(keys):
     current = moveQueue.pop(0)
+    # print(current)
     currentCoord = current[0]
     currentKeys = current[1]
     step = current[2] + 1
+
+    interList = [(elm[0], elm[1]) for elm in stateList]
     
     for elm in possibleMovement:
         updatedCoord = tuple(e + v for e, v in zip(elm, currentCoord))
-        if ((updatedCoord, currentKeys) not in stateList or 
-            ((updatedCoord, currentKeys) in stateList and step < stateList[(updatedCoord, currentKeys)])):
+
+        if (updatedCoord, currentKeys) not in interList:
             
             if updatedCoord in path:
                 moveQueue.append((updatedCoord, currentKeys, step))
-                stateList[(updatedCoord, currentKeys)] = step
+                stateList.append((updatedCoord, currentKeys, step))
 
             elif updatedCoord in keys.keys():
                 if keys[updatedCoord] not in [char for char in currentKeys]:
                     keyList = currentKeys + keys[updatedCoord]
                     moveQueue.append((updatedCoord, keyList, step))
-                    stateList[(updatedCoord, keyList)] = step
+                    stateList.append((updatedCoord, keyList, step))
                 else:
                     moveQueue.append((updatedCoord, currentKeys, step))
-                    stateList[(updatedCoord, currentKeys)] = step
+                    stateList.append((updatedCoord, currentKeys, step))
 
             elif updatedCoord in doors.keys() and doors[updatedCoord].lower() in [char for char in currentKeys]:
                 moveQueue.append((updatedCoord, currentKeys, step))
-                stateList[(updatedCoord, currentKeys)] = step
+                stateList.append((updatedCoord, currentKeys, step))
+
 
     
-    
-possibleSolutions = [(k, v) for k, v in stateList.items() if len(k[1]) == len(keys)]
+possibleSolutions = [(elm[0], elm[1], elm[2]) for elm in stateList if len(elm[1]) == len(keys)]
 minstep = 1000000000
 for elm in possibleSolutions:
-    if elm[1] < minstep:
-        minstep = elm[1]
+    if elm[2] < minstep:
+        minstep = elm[2]
 
 print(minstep)
 
