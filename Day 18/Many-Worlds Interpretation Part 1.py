@@ -58,42 +58,48 @@ def newState(updatedCoord, stateList):
 
 path.add(robot)
 possibleMovement = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-step = 0
+nextStep = 0
 keyList = ''
-moveQueue = [(robot, keyList, step)]
-stateList = [(robot, keyList, step)]
+currentKeys = ''
+moveQueue = [(robot, keyList, nextStep)]
+stateList = [(robot, keyList, nextStep)]
 
 # not sure what to do here in order to solve this. may need to look into path finding algorithms
-while step < 100 and len(keyList) < len(keys):
+# Looks like this method takes a long time on bigger problems. Need a way to speed up
+# if the robot is back at the same location with the same keys (order doesn't matter) then dump that path
+while nextStep < 150 and len(currentKeys) < len(keys):
     current = moveQueue.pop(0)
-    # print(current)
+    print(current)
     currentCoord = current[0]
     currentKeys = current[1]
-    step = current[2] + 1
-
+    setCurrentKeys = set(currentKeys)
+    currentStep = current[2]
+    stateList.append((currentCoord, currentKeys, currentStep))
+    
+    nextStep = currentStep + 1
     interList = [(elm[0], elm[1]) for elm in stateList]
     
     for elm in possibleMovement:
         updatedCoord = tuple(e + v for e, v in zip(elm, currentCoord))
 
-        if (updatedCoord, currentKeys) not in interList:
+        # try some fancy key checking
+        newList = [set(elm[1]) for elm in stateList if elm[0] == updatedCoord and len(elm[1]) == len(currentKeys)]
+        keyInList = [item for item in newList if setCurrentKeys == item]
+
+        if (updatedCoord, currentKeys) not in interList and not keyInList:
             
             if updatedCoord in path:
-                moveQueue.append((updatedCoord, currentKeys, step))
-                stateList.append((updatedCoord, currentKeys, step))
+                moveQueue.append((updatedCoord, currentKeys, nextStep))
 
             elif updatedCoord in keys.keys():
                 if keys[updatedCoord] not in [char for char in currentKeys]:
                     keyList = currentKeys + keys[updatedCoord]
-                    moveQueue.append((updatedCoord, keyList, step))
-                    stateList.append((updatedCoord, keyList, step))
+                    moveQueue.append((updatedCoord, keyList, nextStep))
                 else:
-                    moveQueue.append((updatedCoord, currentKeys, step))
-                    stateList.append((updatedCoord, currentKeys, step))
+                    moveQueue.append((updatedCoord, currentKeys, nextStep))
 
             elif updatedCoord in doors.keys() and doors[updatedCoord].lower() in [char for char in currentKeys]:
-                moveQueue.append((updatedCoord, currentKeys, step))
-                stateList.append((updatedCoord, currentKeys, step))
+                moveQueue.append((updatedCoord, currentKeys, nextStep))              
 
 
     
