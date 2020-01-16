@@ -1,6 +1,5 @@
-"""
-Intcode
-"""
+'''
+'''
 from itertools import chain
 import numpy as np
 import matplotlib.pyplot as plt
@@ -111,6 +110,7 @@ class IntcodeComputer(object):
         """
         self.phaseSetting = input
         self.someInput = input
+        numInput = 0
         currentIndex = 0
         output = []
         while currentIndex != 'end' and currentIndex < len(self.memory):
@@ -139,7 +139,8 @@ class IntcodeComputer(object):
                 
             elif opCode == 3:
                 #print("3 Input")
-                self.setValue(p1, currentIndex + 1, self.someInput)
+                self.setValue(p1, currentIndex + 1, self.someInput[numInput])
+                numInput += 1
                 currentIndex += 2
                 #print(f"current index: {currentIndex}")       
 
@@ -206,50 +207,45 @@ class IntcodeComputer(object):
         
         return output
 
+#from part 1 robot is facing up
 #load memory
-memory = load_file("Day 17/input.txt")
+memory = load_file("Day 17/input Part 2.txt")
 
 robot = IntcodeComputer(memory.copy())
 
-output = []
+# from visual inspection the functions are:
 
-output = robot.Compute()
+main = ['A',',','A',',','B',',','C',',','B',',','A',',','C',',','B',',','C',',','A','\n']
 
-# find all values of 10 in the output list
+A = ['L',',','6',',','R',',','1','2',',','L',',','6',',','L',',','8',',','L',',','8','\n']
+B = ['L',',','6',',','R',',','1','2',',','R',',','8',',','L',',','8','\n']
+C = ['L',',','4',',','L',',','4',',','L',',','6','\n']
+
+main = [ord(elm) for elm in main]
+A = [ord(elm) for elm in A]
+B = [ord(elm) for elm in B]
+C = [ord(elm) for elm in C]
+
+fullInput = main + A + B + C + [110, 10]
+print(fullInput)
+output = robot.Compute(fullInput)
+print(output)
+print(max(output))
+
 idxlist = [idx + 1 for idx, val in enumerate(output) if val == 10]
 
 temp = zip(chain([0], idxlist), chain(idxlist, [None])) 
 res = list(output[i:j] for i, j in temp)
 
-res = res[:-2]
-res = [elm[:-1] for elm in res]
+res = res[:-2]      # remove the last two rows
+res = [elm[:-1] for elm in res] # remove the endline from each row
 
-intersects = []
-sum = 0
-for i in range(len(res)):
-    for j in range(len(res[0])):
-        if res[i][j] != 35 and res[i][j] != 46:
-            robot = (i, j, res[i][j])
-        if (res[i][j] == 35 and i > 1 and j > 1 and
-            i < (len(res) - 1) and j < (len(res[0]) - 1)):
-
-            if (res[i + 1][j] == 35 and res[i - 1][j] == 35 and
-                res[i][j + 1] == 35 and res[i][j - 1] == 35):
-
-                intersects.append((j, i))
-                sum += (i * j)
-
-print(intersects)
-print(sum)
-print(robot) # robot facing up
+startingResult = res[:46]
+finalResult = res[54:]
 
 plt.figure()
 ax = plt.subplot()
-plt.pcolormesh(res, edgecolors='k', linewidths=0.5)
+plt.pcolormesh(finalResult, edgecolors='k', linewidths=0.5)
 ax.invert_yaxis()
 ax.set_aspect('equal')
 plt.show()
-
-
-
-    
